@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Hub — Blogs • Sports • Beauty</title>
+  <meta name="description" content="A simple all‑in‑one website for blogs, sports videos, beauty tips, and community comments — 100% client‑side in a single HTML file."/>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121a2b;
+      --soft: #1a253b;
+      --text: #e7ecf5;
+      --muted: #a8b3c7;
+      --brand: #6aa3ff;
+      --brand-2: #9b72ff;
+      --accent: #56e39f;
+      --danger: #ff7a87;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 80% -100px, rgba(107,159,255,.18), transparent 60%),
+                  radial-gradient(800px 400px at -10% -20%, rgba(155,114,255,.16), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Header / Nav */
+    header {
+      position: sticky; top: 0; z-index: 20;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,18,32,.85), rgba(11,18,32,.65));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav {
+      max-width: 1100px; margin: 0 auto; padding: 14px 20px;
+      display: flex; align-items: center; gap: 16px; justify-content: space-between;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .2px;
+    }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: conic-gradient(from 210deg, var(--brand), var(--brand-2));
+      box-shadow: 0 6px 16px rgba(106,163,255,.4);
+    }
+    .nav a.btn { text-decoration: none; }
+    .actions { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white; border: 0; padding: 10px 14px; border-radius: 12px; cursor: pointer;
+      font-weight: 600; box-shadow: 0 6px 18px rgba(106,163,255,.35);
+    }
+    .ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+
+    /* Layout */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+    .grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 22px; }
+    @media (max-width: 930px) { .grid { grid-template-columns: 1fr; } }
+
+    /* Hero */
+    .hero {
+      margin-top: 16px; margin-bottom: 22px; padding: 22px; border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(20,31,55,.9), rgba(18,26,43,.9));
+      border: 1px solid rgba(255,255,255,.08);
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: center;
+    }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+    .hero h1 { margin: 0 0 8px; font-size: clamp(1.4rem, 3.4vw, 2rem); }
+    .hero p { margin: 0 0 14px; color: var(--muted); }
+    .hero .chips { display:flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 6px 10px; border-radius: 999px; font-size: .85rem; color: #cfe0ff;
+            background: linear-gradient(135deg, rgba(106,163,255,.25), rgba(155,114,255,.25));
+            border: 1px solid rgba(255,255,255,.12);
+    }
+
+    /* Panels */
+    .panel { background: var(--panel); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel h2 { margin: 0; padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 1.05rem; letter-spacing: .3px; }
+    .panel .body { padding: 16px 18px; }
+
+    /* Post composer */
+    .composer { display: grid; gap: 10px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px){ .row { grid-template-columns: 1fr; } }
+    input[type="text"], input[type="url"], textarea, select {
+      width: 100%; padding: 10px 12px; border-radius: 12px; background: var(--soft);
+      color: var(--text); border: 1px solid rgba(255,255,255,.12);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+
+    /* Post card */
+    .post { background: linear-gradient(180deg, rgba(26,37,59,.9), rgba(18,26,43,.9));
+            border: 1px solid rgba(255,255,255,.08); border-radius: 16px; overflow: hidden; }
+    .post .meta { display:flex; align-items:center; gap:10px; color: var(--muted); font-size:.9rem; }
+    .post .head { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.08); display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .tag { font-size: .78rem; padding: 4px 8px; border-radius: 999px; background: rgba(86,227,159,.15); color: var(--accent); border: 1px solid rgba(86,227,159,.35); }
+    .post .content { padding: 14px 16px; color: #dce6ff; }
+    .post iframe { width: 100%; aspect-ratio: 16/9; border: 0; display:block; }
+    .post .actions { display:flex; gap:10px; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.08); align-items:center; }
+    .iconbtn { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+    .count { color: var(--muted); font-size: .9rem; }
+
+    /* Comments */
+    .comments { padding: 12px 16px; border-top: 1px dashed rgba(255,255,255,.12); }
+    .comment { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .comment:last-child { border-bottom: 0; }
+    .comment .who { font-weight: 700; }
+    .small { font-size: .85rem; color: var(--muted); }
+
+    /* Sidebar */
+    .sidebar .card { background: var(--panel); border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+    .list { display: grid; gap: 10px; }
+
+    .filterbar { display:flex; gap:10px; flex-wrap: wrap; }
+    .pill { padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); cursor:pointer; }
+    .pill.active { background: linear-gradient(135deg, rgba(106,163,255,.25), rgba(155,114,255,.25)); border-color: rgba(255,255,255,.24); }
+
+    footer { text-align:center; padding: 40px 16px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>Community Hub</div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="toggleTheme" title="Toggle theme">Toggle Theme</button>
+        <a class="btn" href="#composer">Create Post</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Blogs • Sports Videos • Beauty Tips — all in one place</h1>
+        <p>Share your thoughts, embed game highlights, drop your favorite routines — and chat in the comments. This is a single‑file website: no server needed. Your content saves in this browser using localStorage.</p>
+        <div class="chips">
+          <span class="chip">#blog</span>
+          <span class="chip">#sports</span>
+          <span class="chip">#beauty</span>
+          <span class="chip">#community</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Quick Filters</h2>
+        <div class="body">
+          <div class="filterbar" id="filters"></div>
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="text" id="search" placeholder="Search posts by title or text…" />
+            <select id="sortBy">
+              <option value="new">Newest first</option>
+              <option value="top">Top liked</option>
+            </select>
+            <button class="btn ghost" id="clearAll">Clear</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <div id="feed" class="list"></div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="card" id="composer" style="position: sticky; top: 88px;">
+          <h3 style="margin-top:0">Create a Post</h3>
+          <form class="composer" id="postForm">
+            <input type="text" id="title" placeholder="Title (e.g., Match Review, Daily Skincare)" required />
+            <textarea id="body" placeholder="Write your thoughts, tips, or notes…" required></textarea>
+            <div class="row">
+              <select id="category" required>
+                <option value="blog">Blog</option>
+                <option value="sports">Sports</option>
+                <option value="beauty">Beauty</option>
+              </select>
+              <input type="url" id="video" placeholder="YouTube link (optional)" />
+            </div>
+            <div class="row">
+              <input type="text" id="author" placeholder="Your name (for the post)" />
+              <input type="text" id="tags" placeholder="Tags (comma separated)" />
+            </div>
+            <button class="btn" type="submit">Publish</button>
+          </form>
+          <p class="small" style="margin:10px 2px 0">Tip: Paste a YouTube link to embed a video in your post.</p>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3 style="margin-top:0">About</h3>
+          <p class="small">This demo is 100% front‑end. Data is stored in your browser on this device. To make it multi‑user on the internet, connect a backend later (Firebase, Supabase, or any server).</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    <div>© <span id="year"></span> Community Hub. Built as a single‑file starter.</div>
+  </footer>
+
+  <script>
+    // --- Utilities
+    const $ = (q, el = document) => el.querySelector(q);
+    const $$ = (q, el = document) => Array.from(el.querySelectorAll(q));
+    const uid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+    // --- State & Persistence
+    const LS_KEY = 'communityhub_posts_v1';
+    const LS_THEME = 'communityhub_theme_v1';
+    let posts = [];
+
+    const sample = [
+      {
+        id: uid(),
+        title: "Champions League Highlights — Semi Final",
+        body: "Top moments from last night. What a comeback! Who was your MOTM?",
+        category: "sports",
+        video: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        author: "Alex",
+        tags: ["football","ucl"],
+        likes: 12,
+        createdAt: Date.now() - 1000*60*60*24*2,
+        comments: [{ id: uid(), who: "Sam", text: "Crazy game!", at: Date.now() - 1000*60*60*20 }]
+      },
+      {
+        id: uid(),
+        title: "Morning Skincare: 5‑Step Routine",
+        body: "Gentle cleanser → Vitamin C → Moisturizer → Sunscreen. Keep it consistent!",
+        category: "beauty",
+        video: "",
+        author: "Maya",
+        tags: ["skincare","routine"],
+        likes: 25,
+        createdAt: Date.now() - 1000*60*60*36,
+        comments: []
+      },
+      {
+        id: uid(),
+        title: "Thoughts on Building Habits",
+        body: "Small daily wins compound. What are you tracking this week?",
+        category: "blog",
+        video: "",
+        author: "Taylor",
+        tags: ["productivity"],
+        likes: 8,
+        createdAt: Date.now() - 1000*60*60*10,
+        comments: []
+      }
+    ];
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        posts = raw ? JSON.parse(raw) : sample;
+      } catch { posts = sample; }
+    }
+    function save() { localStorage.setItem(LS_KEY, JSON.stringify(posts)); }
+
+    // --- Theme
+    function applyTheme(mode){
+      if(mode === 'light'){
+        document.documentElement.style.setProperty('--bg', '#f5f7fb');
+        document.documentElement.style.setProperty('--panel', '#ffffff');
+        document.documentElement.style.setProperty('--soft', '#eef2f8');
+        document.documentElement.style.setProperty('--text', '#0b1220');
+        document.documentElement.style.setProperty('--muted', '#4b5565');
+      } else {
+        document.documentElement.style.removeProperty('--bg');
+        document.documentElement.style.removeProperty('--panel');
+        document.documentElement.style.removeProperty('--soft');
+        document.documentElement.style.removeProperty('--text');
+        document.documentElement.style.removeProperty('--muted');
+      }
+      localStorage.setItem(LS_THEME, mode);
+    }
+
+    // --- Rendering
+    function timeAgo(ts){
+      const s = Math.max(1, Math.floor((Date.now() - ts)/1000));
+      const units = [[31536000,'y'],[2592000,'mo'],[604800,'w'],[86400,'d'],[3600,'h'],[60,'m']];
+      for(const [u,l] of units){ if(s >= u) return Math.floor(s/u)+l; }
+      return s + 's';
+    }
+
+    function youTubeEmbed(url){
+      if(!url) return '';
+      try {
+        const u = new URL(url);
+        if(u.hostname.includes('youtu.be')){
+          return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+        }
+        if(u.hostname.includes('youtube.com')){
+          const id = u.searchParams.get('v');
+          if(id) return `https://www.youtube.com/embed/${id}`;
+        }
+      } catch {}
+      return '';
+    }
+
+    function renderFilters(){
+      const cats = ['all','blog','sports','beauty'];
+      const wrap = $('#filters');
+      wrap.innerHTML = '';
+      cats.forEach(c => {
+        const b = document.createElement('button');
+        b.className = 'pill';
+        b.dataset.cat = c;
+        b.textContent = c.charAt(0).toUpperCase()+c.slice(1);
+        b.addEventListener('click', () => {
+          $$('.pill', wrap).forEach(p=>p.classList.remove('active'));
+          b.classList.add('active');
+          renderFeed();
+        });
+        wrap.appendChild(b);
+      });
+      wrap.firstChild.classList.add('active');
+    }
+
+    function getActiveCategory(){
+      const active = $('.pill.active');
+      return active ? active.dataset.cat : 'all';
+    }
+
+    function renderFeed(){
+      const feed = $('#feed');
+      const q = $('#search').value.trim().toLowerCase();
+      const cat = getActiveCategory();
+      const sort = $('#sortBy').value;
+      let list = posts.slice();
+      if(cat !== 'all') list = list.filter(p=>p.category===cat);
+      if(q) list = list.filter(p => (p.title+" "+p.body).toLowerCase().includes(q));
+      if(sort === 'new') list.sort((a,b)=>b.createdAt - a.createdAt);
+      else list.sort((a,b)=>b.likes - a.likes);
+
+      feed.innerHTML = '';
+      if(!list.length){
+        feed.innerHTML = `<div class="panel"><div class="body">No posts yet. Be the first to publish!</div></div>`;
+        return;
+      }
+
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'post';
+        const tag = `<span class="tag">${p.category}</span>`;
+        const meta = `<div class="meta"><span>${p.author || 'Anonymous'}</span>·<span class="small">${timeAgo(p.createdAt)} ago</span></div>`;
+        const yt = youTubeEmbed(p.video);
+        card.innerHTML = `
+          <div class="head">
+            <div style="min-width:0">
+              <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                <h3 style="margin:0; font-size:1.05rem;">${escapeHtml(p.title)}</h3>
+                ${tag}
+              </div>
+              ${meta}
+            </div>
+            <button class="iconbtn" data-action="delete">Delete</button>
+          </div>
+          ${yt ? `<iframe loading="lazy" allowfullscreen src="${yt}"></iframe>` : ''}
+          <div class="content">${nl2br(escapeHtml(p.body))}</div>
+          <div class="actions">
+            <button class="iconbtn" data-action="like">❤️ Like</button>
+            <span class="count">${p.likes || 0} likes • ${p.comments.length} comments</span>
+          </div>
+          <div class="comments">
+            <div class="list">
+              ${p.comments.map(c => `
+                <div class="comment">
+                  <div class="who">${escapeHtml(c.who || 'Guest')} <span class="small">· ${timeAgo(c.at)} ago</span></div>
+                  <div>${nl2br(escapeHtml(c.text))}</div>
+                </div>`).join('')}
+            </div>
+            <form data-action="comment" style="margin-top:10px; display:grid; gap:8px">
+              <div class="row">
+                <input type="text" name="who" placeholder="Your name" />
+                <input type="text" name="text" placeholder="Write a comment…" required />
+              </div>
+              <button class="btn ghost" type="submit">Add Comment</button>
+            </form>
+          </div>
+        `;
+
+        // Button handlers
+        card.querySelector('[data-action="like"]').addEventListener('click', () => {
+          p.likes = (p.likes||0) + 1; save(); renderFeed();
+        });
+        card.querySelector('[data-action="delete"]').addEventListener('click', () => {
+          if(confirm('Delete this post?')){ posts = posts.filter(x=>x.id!==p.id); save(); renderFeed(); }
+        });
+        card.querySelector('form[data-action="comment"]').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
+          const who = (fd.get('who')||'Guest').toString().trim().slice(0,60);
+          const text = (fd.get('text')||'').toString().trim();
+          if(!text) return;
+          p.comments.push({ id: uid(), who, text, at: Date.now() });
+          save(); renderFeed();
+        });
+
+        feed.appendChild(card);
+      });
+    }
+
+    // --- Helpers for safe rendering
+    function escapeHtml(s){
+      return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));
+    }
+    function nl2br(s){ return s.replace(/\n/g,'<br>'); }
+
+    // --- Events
+    $('#postForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = $('#title').value.trim();
+      const body  = $('#body').value.trim();
+      const category = $('#category').value;
+      const video = $('#video').value.trim();
+      const author = $('#author').value.trim();
+      const tags = $('#tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+      if(!title || !body) return alert('Please enter a title and some text.');
+      posts.unshift({ id: uid(), title, body, category, video, author, tags, likes: 0, createdAt: Date.now(), comments: [] });
+      save();
+      e.currentTarget.reset();
+      renderFeed();
+      window.location.hash = '';
+    });
+
+    $('#search').addEventListener('input', renderFeed);
+    $('#sortBy').addEventListener('change', renderFeed);
+    $('#clearAll').addEventListener('click', () => { $('#search').value=''; $$('.pill').forEach(p=>p.classList.remove('active')); $('#filters').firstChild.classList.add('active'); $('#sortBy').value='new'; renderFeed(); });
+
+    // Theme toggle
+    const savedTheme = localStorage.getItem(LS_THEME) || 'dark';
+    applyTheme(savedTheme);
+    $('#toggleTheme').addEventListener('click', () => {
+      const mode = (localStorage.getItem(LS_THEME) || 'dark') === 'dark' ? 'light' : 'dark';
+      applyTheme(mode);
+    });
+
+    // Boot
+    $('#year').textContent = new Date().getFullYear();
+    load();
+    renderFilters();
+    renderFeed();
+  </script>
+</body>
+</html>
